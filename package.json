@@ -2,12 +2,13 @@
   "name": "be-todo",
   "version": "1.0.0",
   "description": "backend todo project",
-  "main": "index.js",
+  "main": "app.js",
   "engines": {
     "node": "20.10.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm install",
     "start": "nodemon app.js",
     "start-prod": "node app.js"
   },
