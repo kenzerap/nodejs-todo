@@ -17,6 +17,7 @@ const productSchema = new Schema(
     description: {
       type: String,
     },
+    //category
   },
   { timestamps: true }
 );
