@@ -27,6 +27,12 @@ const router = express.Router();
  *               name:
  *                 type: string
  *                 example: lwqwqoe
+ *               phone:
+ *                 type: string
+ *                 example: 7386622
+ *               address:
+ *                 type: string
+ *                 example: ajss wuwe qe
  */
 router.post(
   '/signup',

@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
   try {
     decodedToken = jwt.verify(token, process.env.SECRET_KEY ? process.env.SECRET_KEY : 'hoangnqjwtsecretkey');
   } catch (err) {
-    err.statusCode = 500;
+    err.statusCode = 401;
     throw err;
   }
   if (!decodedToken) {
