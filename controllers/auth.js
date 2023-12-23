@@ -64,7 +64,14 @@ exports.login = async (req, res, next) => {
       process.env.SECRET_KEY ? process.env.SECRET_KEY : 'hoangnqjwtsecretkey',
       { expiresIn: '1h' }
     );
-    res.status(200).json({ token, userId: user._id.toString() });
+    res
+      .status(200)
+      .json({
+        token,
+        userId: user._id.toString(),
+        email: user.email,
+        name: user.name,
+      });
   } catch (error) {
     error.statusCode = !error.statusCode ? 500 : !error.statusCode;
     next(error);
