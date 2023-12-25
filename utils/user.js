@@ -6,5 +6,6 @@ exports.toUserViewModel = (userDoc) => {
     phone: userDoc.phone,
     address: userDoc.address,
     status: userDoc.status,
+    isAdmin: userDoc.isAdmin
   };
 };

@@ -25,6 +25,25 @@ router.get('/:userId', isAuth, userController.getUser);
 /**
  * @swagger
  * /user/{userId}:
+ *   put:
+ *     description: update
+ */
+router.put(
+  '/:userId',
+  isAuth,
+  [
+    body('email')
+      .isEmail()
+      .withMessage('Please enter a valid email.')
+      .normalizeEmail(),
+    body('name').trim().notEmpty(),
+  ],
+  userController.updateUser
+);
+
+/**
+ * @swagger
+ * /user/{userId}:
  *   delete:
  *     description: delete
  */

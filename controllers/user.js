@@ -18,7 +18,7 @@ exports.getUsers = async (req, res, next) => {
 exports.getUser = async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const user = await Product.findById(userId);
+    const user = await User.findById(userId);
     if (!user) {
       const error = new Error('Could not find user.');
       error.statusCode = 404;
@@ -32,12 +32,53 @@ exports.getUser = async (req, res, next) => {
   }
 };
 
+exports.updateUser = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error('Validation failed, entered data is incorrect.');
+      error.statusCode = 422;
+      error.data = errors.array();
+      throw error;
+    }
+
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+      const error = new Error('Could not find user.');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    user.email = req.body.email;
+    user.name = req.body.name;
+    user.phone = req.body.phone;
+    user.address = req.body.address;
+
+    await user.save();
+
+    res.status(201).json({
+      message: 'Update successfully!',
+      user: toUserViewModel(user),
+    });
+  } catch (error) {
+    error.statusCode = !error.statusCode ? 500 : !error.statusCode;
+    next(error);
+  }
+};
+
 exports.deleteUser = async (req, res, next) => {
   try {
     const userId = req.params.userId;
     const user = await User.findById(userId);
     if (!user) {
       const error = new Error('Could not find user.');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (user.isAdmin) {
+      const error = new Error('Could not delete admin.');
       error.statusCode = 404;
       throw error;
     }
