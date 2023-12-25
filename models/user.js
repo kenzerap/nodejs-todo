@@ -20,6 +20,10 @@ const userSchema = new Schema({
   address: {
     type: String,
   },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
   status: {
     type: String,
     default: 'active',
