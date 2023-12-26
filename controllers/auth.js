@@ -70,6 +70,8 @@ exports.login = async (req, res, next) => {
         id: user._id.toString(),
         email: user.email,
         name: user.name,
+        isAdmin: user.isAdmin,
+        status: user.status
       },
     });
   } catch (error) {
