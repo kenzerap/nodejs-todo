@@ -78,6 +78,7 @@ exports.deleteUser = async (req, res, next) => {
   try {
     const userId = req.params.userId;
     const userLoginId = req.userId;
+    const userLogin = await User.findById(userLoginId);
 
     const user = await User.findById(userId);
     if (!user) {
@@ -86,7 +87,7 @@ exports.deleteUser = async (req, res, next) => {
       throw error;
     }
 
-    if (userId !== userLoginId && !user.isAdmin) {
+    if (userId !== userLoginId && !userLogin.isAdmin) {
       const error = new Error("You don't have permission to update this user.");
       error.statusCode = 403;
       throw error;
