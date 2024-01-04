@@ -6,9 +6,7 @@ const { toUserViewModel } = require('../utils/user');
 exports.getUsers = async (req, res, next) => {
   try {
     const users = await User.find();
-    res
-      .status(200)
-      .send(users.map((user) => toUserViewModel(user)));
+    res.status(200).send(users.map((user) => toUserViewModel(user)));
   } catch (error) {
     error.statusCode = !error.statusCode ? 500 : !error.statusCode;
     next(error);
@@ -43,10 +41,19 @@ exports.updateUser = async (req, res, next) => {
     }
 
     const userId = req.params.userId;
+    const userLoginId = req.userId;
+    const userLogin = await User.findById(userLoginId);
+
     const user = await User.findById(userId);
     if (!user) {
       const error = new Error('Could not find user.');
       error.statusCode = 404;
+      throw error;
+    }
+
+    if (userId !== userLoginId && !userLogin.isAdmin) {
+      const error = new Error("You don't have permission to update this user.");
+      error.statusCode = 403;
       throw error;
     }
 
@@ -70,10 +77,18 @@ exports.updateUser = async (req, res, next) => {
 exports.deleteUser = async (req, res, next) => {
   try {
     const userId = req.params.userId;
+    const userLoginId = req.userId;
+
     const user = await User.findById(userId);
     if (!user) {
       const error = new Error('Could not find user.');
       error.statusCode = 404;
+      throw error;
+    }
+
+    if (userId !== userLoginId && !user.isAdmin) {
+      const error = new Error("You don't have permission to update this user.");
+      error.statusCode = 403;
       throw error;
     }
 
