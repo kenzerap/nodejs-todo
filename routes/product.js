@@ -1,5 +1,6 @@
 const express = require('express');
 const { body } = require('express-validator');
+const Category = require('../models/category');
 
 const productController = require('../controllers/product');
 
@@ -39,17 +40,30 @@ router.get('/:productId', productController.getProduct);
  *               price:
  *                type: number
  *                example: 1234
- *               imageUrl:
- *                type: string
- *                example: hshshs
+ *               imageUrls:
+ *                type: string[]
+ *                example: [hshshs, heeyw]
  *               description:
  *                type: string
  *                example: jajaja
+ *               categoryId:
+ *                type: string
+ *                example: wwweeer
  */
 router.post(
   '',
   [
     body('name').trim().notEmpty(),
+    body('categoryId')
+      .trim()
+      .notEmpty()
+      .custom((value, { req }) => {
+        return Category.findOne({ _id: value }).then((categoryDoc) => {
+          if (!categoryDoc) {
+            return Promise.reject('Category not found');
+          }
+        });
+      }),
     body('price').notEmpty().isDecimal(),
   ],
   productController.createProducts
@@ -63,7 +77,20 @@ router.post(
  */
 router.put(
   '/:productId',
-  [body('name').trim().notEmpty(), body('price').notEmpty().isDecimal()],
+  [
+    body('name').trim().notEmpty(),
+    body('categoryId')
+      .trim()
+      .notEmpty()
+      .custom((value, { req }) => {
+        return Category.findOne({ _id: value }).then((categoryDoc) => {
+          if (!categoryDoc) {
+            return Promise.reject('Category not found');
+          }
+        });
+      }),
+    body('price').notEmpty().isDecimal(),
+  ],
   productController.updateProduct
 );
 

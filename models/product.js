@@ -11,16 +11,19 @@ const productSchema = new Schema(
       type: Number,
       required: true,
     },
-    imageUrl: {
-      type: String,
-    },
+    imageUrls: [
+      {
+        type: String,
+      },
+    ],
     description: {
       type: String,
     },
-    /* categoryId: {
+    categoryId: {
       type: Schema.Types.ObjectId,
-      ref: 'Category'
-    }, */
+      ref: 'Category',
+      required: true,
+    },
   },
   { timestamps: true }
 );

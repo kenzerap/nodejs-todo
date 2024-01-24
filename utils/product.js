@@ -1,9 +1,12 @@
+const { toCategoryViewModel } = require("./category");
+
 exports.toProductViewModel = (productDoc) => {
   return {
     id: productDoc._id,
     name: productDoc.name,
     price: productDoc.price,
-    imageUrl: productDoc.imageUrl,
+    imageUrls: productDoc.imageUrls,
     description: productDoc.description,
+    category: productDoc.categoryId ? toCategoryViewModel(productDoc.categoryId) : null
   };
 };

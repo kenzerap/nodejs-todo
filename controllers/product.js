@@ -5,7 +5,7 @@ const { toProductViewModel } = require('../utils/product');
 
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().populate('categoryId');
     res
       .status(200)
       .send(products.map((product) => toProductViewModel(product)));
@@ -18,7 +18,7 @@ exports.getProducts = async (req, res, next) => {
 exports.getProduct = async (req, res, next) => {
   try {
     const productId = req.params.productId;
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productId).populate('categoryId');
     if (!product) {
       const error = new Error('Could not find product.');
       error.statusCode = 404;
@@ -45,8 +45,9 @@ exports.createProducts = async (req, res, next) => {
     const product = new Product({
       name: req.body.name,
       price: req.body.price,
-      imageUrl: req.body.imageUrl,
+      imageUrls: req.body.imageUrls,
       description: req.body.description,
+      categoryId: req.body.categoryId,
     });
 
     await product.save();
@@ -81,10 +82,9 @@ exports.updateProduct = async (req, res, next) => {
 
     product.name = req.body.name;
     product.price = req.body.price;
-    product.imageUrl = req.body.imageUrl;
+    product.imageUrls = req.body.imageUrls;
     product.description = req.body.description;
-
-    await product.save();
+    (product.categoryId = req.body.categoryId), await product.save();
 
     res.status(201).json({
       message: 'Update successfully!',
