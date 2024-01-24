@@ -11,6 +11,29 @@ const router = express.Router();
  * /product/list:
  *   get:
  *     description: get list
+ *     parameters:
+ *      - name: searchBy
+ *        description: search By field name,...
+ *        type: string
+ *      - name: search
+ *        description: search key
+ *        type: string
+ *      - name: orderBy
+ *        description: orderBy field name,...
+ *        type: string
+ *      - name: orderByDirection
+ *        description: orderByDirection
+ *        type: string
+ *        enum: [asc, desc]
+ *      - name: page
+ *        description: page number
+ *        type: number
+ *      - name: itemPerPage
+ *        description: item Per a Page
+ *        type: number
+ *      - name: categoryCode
+ *        description: filter by field category.Code
+ *        type: number
  */
 router.get('/list', productController.getProducts);
 
@@ -49,6 +72,12 @@ router.get('/:productId', productController.getProduct);
  *               categoryId:
  *                type: string
  *                example: wwweeer
+ *               soldCount:
+ *                type: number
+ *                example: 23
+ *               discountPercentage:
+ *                type: number
+ *                example: 10
  */
 router.post(
   '',

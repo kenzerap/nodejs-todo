@@ -24,6 +24,17 @@ const productSchema = new Schema(
       ref: 'Category',
       required: true,
     },
+    soldCount: {
+      type: Number,
+      default: 0,
+    },
+    discountPercentage: {
+      type: Number,
+      default: 0,
+    },
+    // rating: {
+    //   type: Number,
+    // },
   },
   { timestamps: true }
 );

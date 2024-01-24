@@ -1,14 +1,54 @@
 const Product = require('../models/product');
+const Category = require('../models/category');
 const { validationResult } = require('express-validator');
 
 const { toProductViewModel } = require('../utils/product');
 
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find().populate('categoryId');
-    res
-      .status(200)
-      .send(products.map((product) => toProductViewModel(product)));
+    const {
+      searchBy,
+      search,
+      orderBy,
+      orderByDirection,
+      page,
+      itemPerPage,
+      categoryCode,
+    } = req.query;
+
+    const categoryByCode = await Category.findOne({ code: categoryCode });
+
+    const queries = {
+      page: page || 1,
+      itemPerPage: itemPerPage || 50,
+      searchBy: searchBy || 'name',
+      search: search || '',
+      orderBy: orderBy || 'name',
+      orderByDirection: orderByDirection === 'desc' ? -1 : 1,
+    };
+
+    const filter = {
+      $or: (!Array.isArray(queries.searchBy)
+        ? [queries.searchBy]
+        : queries.searchBy
+      ).map((key) => ({
+        [key]: { $regex: queries.search, $options: 'i' },
+      })),
+      [categoryByCode ? 'categoryId' : undefined]: categoryByCode?._id,
+    };
+
+    const totalItem = await Product.find({ ...filter }).countDocuments();
+    const products = await Product.find({ ...filter })
+      .skip((queries.page - 1) * queries.itemPerPage)
+      .limit(queries.itemPerPage)
+      .sort({ [queries.orderBy]: queries.orderByDirection })
+      .populate('categoryId');
+
+    res.status(200).send({
+      data: products.map((product) => toProductViewModel(product)),
+      totalItem,
+      hasNextPage: queries.page * queries.itemPerPage < totalItem,
+    });
   } catch (error) {
     error.statusCode = !error.statusCode ? 500 : !error.statusCode;
     next(error);
@@ -48,6 +88,8 @@ exports.createProducts = async (req, res, next) => {
       imageUrls: req.body.imageUrls,
       description: req.body.description,
       categoryId: req.body.categoryId,
+      soldCount: req.body.soldCount,
+      discountPercentage: req.body.discountPercentage,
     });
 
     await product.save();
@@ -84,8 +126,11 @@ exports.updateProduct = async (req, res, next) => {
     product.price = req.body.price;
     product.imageUrls = req.body.imageUrls;
     product.description = req.body.description;
-    (product.categoryId = req.body.categoryId), await product.save();
+    product.categoryId = req.body.categoryId;
+    product.soldCount = req.body.soldCount;
+    product.discountPercentage = req.body.discountPercentage;
 
+    await product.save();
     res.status(201).json({
       message: 'Update successfully!',
       product: toProductViewModel(product),

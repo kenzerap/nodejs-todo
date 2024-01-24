@@ -5,16 +5,10 @@ const { toCategoryViewModel } = require('../utils/category');
 
 exports.getCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find();
+    const categories = await Category.find().sort({ name: 1 });
     res
       .status(200)
-      .send(
-        categories
-          .map((category) => toCategoryViewModel(category))
-          .sort((a, b) =>
-            a.name.toLowerCase() < b.name.toLowerCase() ? 1 : -1
-          )
-      );
+      .send(categories.map((category) => toCategoryViewModel(category)));
   } catch (error) {
     error.statusCode = !error.statusCode ? 500 : !error.statusCode;
     next(error);

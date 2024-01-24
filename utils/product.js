@@ -1,4 +1,4 @@
-const { toCategoryViewModel } = require("./category");
+const { toCategoryViewModel } = require('./category');
 
 exports.toProductViewModel = (productDoc) => {
   return {
@@ -7,6 +7,10 @@ exports.toProductViewModel = (productDoc) => {
     price: productDoc.price,
     imageUrls: productDoc.imageUrls,
     description: productDoc.description,
-    category: productDoc.categoryId ? toCategoryViewModel(productDoc.categoryId) : null
+    category: productDoc.categoryId
+      ? toCategoryViewModel(productDoc.categoryId)
+      : null,
+    soldCount: productDoc.soldCount,
+    discountPercentage: productDoc.discountPercentage,
   };
 };
