@@ -12,5 +12,6 @@ exports.toProductViewModel = (productDoc) => {
       : null,
     soldCount: productDoc.soldCount,
     discountPercentage: productDoc.discountPercentage,
+    createdAt: productDoc.createdAt
   };
 };
