@@ -50,7 +50,6 @@ router.post(
   '',
   [
     body('name').trim().notEmpty(),
-    body('name').trim().notEmpty(),
     body('price').notEmpty().isDecimal(),
   ],
   productController.createProducts

@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/product');
 const userRoutes = require('./routes/user');
+const categoryRoutes = require('./routes/category');
 
 const app = express();
 app.use(bodyParser.json());
@@ -40,6 +41,7 @@ app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use('/auth', authRoutes);
 app.use('/product', productRoutes);
 app.use('/user', userRoutes);
+app.use('/category', categoryRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
