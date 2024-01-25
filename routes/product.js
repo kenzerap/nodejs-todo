@@ -13,18 +13,19 @@ const router = express.Router();
  *     description: get list
  *     parameters:
  *      - name: searchBy
- *        description: search By field name,...
+ *        description: search By model field name, price,...
  *        type: string
  *      - name: search
  *        description: search key
  *        type: string
  *      - name: orderBy
- *        description: orderBy field name,...
+ *        description: order By model field name, price...
  *        type: string
  *      - name: orderByDirection
  *        description: orderByDirection
- *        type: string
- *        enum: [asc, desc]
+ *        schema:
+ *          type: string
+ *          enum: [asc, desc]
  *      - name: page
  *        description: page number
  *        type: number
