@@ -56,7 +56,7 @@ mongoose
     `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.csj0yiv.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&w=majority`
   )
   .then((result) => {
-    console.log('db connected!');
-    app.listen(process.env.PORT || 8080);
+    console.log('db connected on port: ', process.env.PORT || 3000);
+    app.listen(process.env.PORT || 3000);
   })
   .catch((err) => console.log(err));
