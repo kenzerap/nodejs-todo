@@ -99,6 +99,16 @@ router.post(
   productController.createProducts
 );
 
+router.post(
+  '/import',
+  [
+    body('products').isArray(),
+    body('products.*.name').trim().notEmpty(),
+    body('products.*.price').notEmpty().isDecimal(),
+  ],
+  productController.importProducts
+);
+
 /**
  * @swagger
  * /product/{productId}:

@@ -3,6 +3,7 @@
         "MONGO_USER": "hoangnq",
         "MONGO_PASSWORD": "rQoj2hoe809FzCGC",
         "MONGO_DEFAULT_DATABASE": "todo",
-        "SECRET_KEY": "hoangnqjwtsecretkey"
+        "SECRET_KEY": "hoangnqjwtsecretkey",
+        "PORT": "3002"
     }
 }

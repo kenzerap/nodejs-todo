@@ -3,6 +3,7 @@ const Category = require('../models/category');
 const { validationResult } = require('express-validator');
 
 const { toProductViewModel } = require('../utils/product');
+const category = require('../models/category');
 
 exports.getProducts = async (req, res, next) => {
   try {
@@ -97,6 +98,55 @@ exports.createProducts = async (req, res, next) => {
     res.status(201).json({
       message: 'Create successfully!',
       product: toProductViewModel(product),
+    });
+  } catch (error) {
+    error.statusCode = !error.statusCode ? 500 : !error.statusCode;
+    next(error);
+  }
+};
+
+exports.importProducts = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error('Validation failed, entered data is incorrect.');
+      error.statusCode = 422;
+      error.data = errors.array();
+      throw error;
+    }
+
+    // get list category
+    const categories = await Category.find();
+
+    const productList = req.body;
+    // insert multiple products
+    for (const productData of productList.products) {
+      const category = categories.find(
+        (category) => category.code === productData.category
+      );
+      if (category) {
+        await Product.updateOne(
+          { name: productData.name },
+          {
+            $set: {
+              price: productData.price,
+              imageUrls: productData.imageUrls,
+              description: productData.description,
+              categoryId: category._id,
+              soldCount: productData.soldCount,
+              discountPercentage: productData.discountPercentage,
+            },
+          },
+          { upsert: true } // Insert the product if it does not exist
+        );
+      }
+    }
+
+    res.status(201).json({
+      message: 'Import successfully!',
+      product: productList.products.map((product) =>
+        toProductViewModel(product)
+      ),
     });
   } catch (error) {
     error.statusCode = !error.statusCode ? 500 : !error.statusCode;

@@ -8,6 +8,7 @@ const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/product');
 const userRoutes = require('./routes/user');
 const categoryRoutes = require('./routes/category');
+const { runConsumer, shutdownConsumer } = require('./kafka/consumer');
 
 const app = express();
 app.use(bodyParser.json());
@@ -57,6 +58,19 @@ mongoose
   )
   .then((result) => {
     console.log('db connected on port: ', process.env.PORT || 3000);
-    app.listen(process.env.PORT || 3000);
+    runConsumer(); // Start the Kafka consumer
+    app.listen(process.env.PORT || 3002);
   })
-  .catch((err) => console.log(err));
+  .catch((err) => {
+    console.log(err);
+  });
+
+// Handle graceful shutdown
+const handleShutdown = async () => {
+  console.log('Shutting down gracefully...');
+  await shutdownConsumer();
+  process.exit(0);
+};
+
+process.on('SIGINT', handleShutdown);
+process.on('SIGTERM', handleShutdown);
